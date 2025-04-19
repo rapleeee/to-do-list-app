@@ -1,10 +1,11 @@
 import { View, Text, TextInput, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import tw from 'twrnc';
 import PrimaryButton from '@/components/PrimaryButton';
 import InputField from '@/components/InputField';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type TaskItem = {
   id: string;
@@ -17,6 +18,20 @@ export default function HomeScreen() {
   const [subject, setSubject] = useState('');
   const [date, setDate] = useState(Date());
   const [list, setList] = useState<TaskItem[]>([]);
+
+  useEffect(() => {
+    saveTask();
+  },[list])
+
+
+  const saveTask = async () => {
+    try{
+      await AsyncStorage.setItem('task', JSON.stringify([]));
+      console.log('data masuk ke lokal')
+    }catch(error){
+      console.log('yah data gamasuk')
+    }
+  }
 
   const addTask = () => {
     if (task.trim() === "" && subject.trim() === "") return;
@@ -62,7 +77,6 @@ export default function HomeScreen() {
             <Ionicons name='push' size={24} color={'white'} />
           </TouchableOpacity>
         </View>
-
         <PrimaryButton titleBtn={'add Task'} handle={addTask} />
       </View>
     </SafeAreaView>
