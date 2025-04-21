@@ -19,6 +19,7 @@ export default function InputField(props: TextInputProps) {
       <TextInput
         {...props}
         style={tw`p-2 text-black text-base`}
+        placeholderTextColor={'gray'}
       />
     </View>
   );
