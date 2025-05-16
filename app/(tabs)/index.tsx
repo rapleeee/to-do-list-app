@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, Alert, FlatList } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, Alert, FlatList, TextInput } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import tw from 'twrnc';
@@ -14,12 +14,17 @@ type TaskItem = {
   date: string;
 };
 
+type Props = {
+  disabled ?: boolean;
+};
 export default function HomeScreen() {
   const [task, setTask] = useState('');
   const [subject, setSubject] = useState('');
   const [date, setDate] = useState('');
   const [list, setList] = useState<TaskItem[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const subjectRef = useRef<TextInput>(null);
+  const taskRef = useRef<TextInput>(null);
 
   useEffect(() => {
     loadTasks();
@@ -153,12 +158,16 @@ export default function HomeScreen() {
           value={task}
           onChangeText={setTask}
           placeholder="Ada tugas apa hari ini?"
+          returnKeyType='next'
+          onSubmitEditing={() => taskRef.current?.focus()}
         />
 
         <InputField
           value={subject}
           onChangeText={setSubject}
           placeholder="Mapelnya apa tu?"
+          returnKeyType='next'
+          onSubmitEditing={() => subjectRef.current?.focus()}
         />
 
         <View style={tw`flex-row gap-2 items-center`}>
@@ -166,7 +175,8 @@ export default function HomeScreen() {
             <InputField
               value={date}
               onChangeText={setDate}
-              placeholder="Tanggal deadline (17 April 2025)"
+              
+              placeholder="Tanggal deadline (17 A pril 2025)"
             />
           </View>
           <TouchableOpacity
@@ -177,8 +187,10 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        <PrimaryButton titleBtn={'Tambah Tugas'} handle={addTask} />
 
+        <TouchableOpacity onPress={addTask} disabled={task === '' || subject === ''} style={[tw`p-2 rounded-lg items-center border border-neutral-400 bg-[#032A4E]`]}>
+          <Text style={tw`text-white font-bold text-base`}>Submit</Text>
+        </TouchableOpacity>
         <Text style={tw`text-lg font-bold mt-4 mb-2 text-neutral-500`}>Ada Tugas Ni Kamu!</Text>
 
         {list.length === 0 ? (
